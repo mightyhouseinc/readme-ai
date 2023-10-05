@@ -33,7 +33,7 @@ def run_app(
     config.api.temperature = temperature
     config.api.offline_mode = offline_mode
     config.git = conf.GitConfig(repository=repository)
-    if api_key is None and offline_mode is False:
+    if api_key is None and not offline_mode:
         config.api.offline_mode = offline_mode
 
     asyncio.run(generate_readme(config, config_helper))

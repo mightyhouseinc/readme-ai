@@ -65,11 +65,10 @@ class FileHandler:
         if not file_actions:
             raise ValueError(f"Unsupported file type: {file_extension}")
 
-        action = file_actions.get(action_type)
-        if not action:
+        if action := file_actions.get(action_type):
+            return action
+        else:
             raise ValueError(f"Unsupported action type: {action_type}")
-
-        return action
 
     @staticmethod
     def read_json(file_path: Union[str, Path]) -> Dict[str, Any]:
@@ -88,8 +87,7 @@ class FileHandler:
         """Read the content of a TOML file."""
         with open(file_path, encoding="utf-8") as file:
             data = toml.load(file)
-        data_cleaned = {key.lower(): value for key, value in data.items()}
-        return data_cleaned
+        return {key.lower(): value for key, value in data.items()}
 
     @staticmethod
     def read_text(file_path: Union[str, Path]) -> str:

@@ -63,18 +63,16 @@ class GitConfig(BaseModel):
     @validator("name", pre=True, always=True)
     def get_repository_name(cls, value: str, values: dict) -> str:
         """Extract the repository name from the URL or path."""
-        repository_path = values.get("repository")
-        if repository_path:
-            parsed_url = urlsplit(str(repository_path))
-            if parsed_url.hostname in DefaultHosts.__members__.values():
-                path = parsed_url.path
-                name = path.rsplit("/", 1)[-1] if "/" in path else path
-                if name.endswith(".git"):
-                    name = name[:-4]
-                return name
-            else:
-                return Path(repository_path).name
-        return value
+        if not (repository_path := values.get("repository")):
+            return value
+        parsed_url = urlsplit(str(repository_path))
+        if parsed_url.hostname not in DefaultHosts.__members__.values():
+            return Path(repository_path).name
+        path = parsed_url.path
+        name = path.rsplit("/", 1)[-1] if "/" in path else path
+        if name.endswith(".git"):
+            name = name[:-4]
+        return name
 
 
 class MarkdownConfig(BaseModel):

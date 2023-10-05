@@ -140,8 +140,7 @@ class OpenAIHandler:
                 results.append(result)
             tasks = pending
 
-        response_list = [summary for _, summary in sorted(results)]
-        return response_list
+        return [summary for _, summary in sorted(results)]
 
     @retry(
         stop=stop_after_attempt(3),

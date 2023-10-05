@@ -171,8 +171,7 @@ def parse_requirements_file(content: str) -> List[str]:
         line = line.strip()
         if not line or line.startswith("#"):
             continue
-        match = re.match(r"^\s*([a-zA-Z0-9._-]+)", line)
-        if match:
+        if match := re.match(r"^\s*([a-zA-Z0-9._-]+)", line):
             package_names.append(match.group(1))
     return package_names
 
@@ -180,8 +179,7 @@ def parse_requirements_file(content: str) -> List[str]:
 def parse_cargo_toml(content: str) -> List[str]:
     """Extracts dependencies from a Cargo.toml file."""
     try:
-        dependencies = re.findall(r"\[dependencies\.(.*?)\]", content)
-        return dependencies
+        return re.findall(r"\[dependencies\.(.*?)\]", content)
     except re.error as excinfo:
         logger.error(f"Error parsing Cargo.toml: {str(excinfo)}")
     return []
@@ -272,15 +270,13 @@ def parse_maven(content: str) -> List[str]:
 def parse_cmake(content: str) -> List[str]:
     """Extracts dependencies from a CMakeLists.txt file."""
     regex = re.compile(r"add_executable\([^)]+\s+([^)]+)\)")
-    package_names = regex.findall(content)
-    return package_names
+    return regex.findall(content)
 
 
 def parse_configure_ac(content: str) -> List[str]:
     """Extracts dependencies from a configure.ac file."""
     regex = re.compile(r"AC_CHECK_LIB\([^)]+\s+([^)]+)\)")
-    package_names = regex.findall(content)
-    return package_names
+    return regex.findall(content)
 
 
 def parse_makefile_am(content: str) -> List[str]:
