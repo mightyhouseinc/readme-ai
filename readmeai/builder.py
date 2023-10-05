@@ -55,7 +55,7 @@ def build_markdown_sections(
         tables = create_markdown_tables(config.md.default, code_summary)
         config.md.tables = create_tables(tables, config.md.dropdown, user_repo)
 
-    markdown_sections = [
+    return [
         config.md.header,
         markdown_badges,
         config.md.toc.format(name),
@@ -66,7 +66,6 @@ def build_markdown_sections(
         config.md.setup.format(name, repository, *markdown_setup_guide),
         config.md.ending,
     ]
-    return markdown_sections
 
 
 def get_badges(svg_icons: dict, dependencies: list) -> str:
@@ -216,8 +215,7 @@ def create_table(data: List[Tuple[str, str]], user_repo_name: str) -> str:
 
 def build_recursive_tables(base_url: str, directory: Path, placeholder) -> str:
     """Creates a Markdown table structure for the given directory."""
-    markdown = ""
-    markdown += "| File | Summary |\n"
+    markdown = "" + "| File | Summary |\n"
     markdown += "| --- | --- |\n"
 
     for item in sorted(directory.iterdir()):
@@ -246,11 +244,7 @@ def generate_tree(
     """Recursively generates a tree structure for a given directory."""
     if directory.name == directory:
         return ""
-    if directory == repo_url:
-        display_name = "."
-    else:
-        display_name = directory.name
-
+    display_name = "." if directory == repo_url else directory.name
     box_branch = "└── " if is_last else "├── "
     tree_str = parent_prefix + box_branch + display_name
 
@@ -280,5 +274,4 @@ def format_tree(name: str, tree_str: str) -> str:
     tree_str = tree_str.split("\n", 1)
     tree_str[0] = f"└── {name}/"
     tree_str = "\n".join(tree_str)
-    tree = f"```sh\n{tree_str}```"
-    return tree
+    return f"```sh\n{tree_str}```"

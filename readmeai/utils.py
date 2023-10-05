@@ -45,8 +45,7 @@ def clone_repo_to_temp_dir(repo_path: str) -> Path:
 
 def find_git_executable() -> Optional[Path]:
     """Find the path to the git executable, if available."""
-    git_exec_path = os.environ.get("GIT_PYTHON_GIT_EXECUTABLE")
-    if git_exec_path:
+    if git_exec_path := os.environ.get("GIT_PYTHON_GIT_EXECUTABLE"):
         return Path(git_exec_path)
 
     # For Windows, set default known location for git executable
@@ -95,9 +94,7 @@ def get_user_repository_name(url_or_path) -> str:
         return os.path.basename(url_or_path)
 
     pattern = r"https?://github.com/([^/]+)/([^/]+)"
-    match = re.match(pattern, url_or_path)
-
-    if match:
+    if match := re.match(pattern, url_or_path):
         username, reponame = match.groups()
         return f"{username}/{reponame}"
     else:
@@ -109,23 +106,20 @@ def adjust_max_tokens(
 ) -> int:
     """Adjust the maximum number of tokens based on the specific prompt."""
     is_valid_prompt = prompt.strip().startswith(target.strip())
-    adjusted_max_tokens = max_tokens if is_valid_prompt else max_tokens // 3
-    return adjusted_max_tokens
+    return max_tokens if is_valid_prompt else max_tokens // 3
 
 
 def get_token_count(text: str, encoding_name: str) -> int:
     """Returns the number of tokens in a text string."""
     encoding = get_encoding(encoding_name)
-    num_tokens = len(encoding.encode(text))
-    return num_tokens
+    return len(encoding.encode(text))
 
 
 def truncate_tokens(text: str, encoding_name: str, max_tokens: int) -> str:
     """Truncate a text string to a maximum number of tokens."""
     encoding = get_encoding(encoding_name)
     encoded_text = encoding.encode(text)[:max_tokens]
-    truncated_text = encoding.decode(encoded_text)
-    return truncated_text
+    return encoding.decode(encoded_text)
 
 
 def is_valid_url(url: str) -> bool:
@@ -177,7 +171,4 @@ def format_sentence(text: str) -> str:
 def remove_substring(input_string: str) -> str:
     """Remove text between HTML tags."""
     pattern = r"</p>.*?</div>"
-    output_string = re.sub(
-        pattern, "</p>\n</div>", input_string, flags=re.DOTALL
-    )
-    return output_string
+    return re.sub(pattern, "</p>\n</div>", input_string, flags=re.DOTALL)
